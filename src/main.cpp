@@ -15,8 +15,14 @@
     std::cout << "$ ";
 
     std::getline(std::cin, input);
+    input = std::regex_replace(input, std::regex("^ +| +$|( ) +"), "$1");
     if (std::regex_match(input, std::regex("^exit [0-9]+$"))) {
       return 0;
+    }
+
+    if (std::regex_match(input, std::regex("^echo .*"))) {
+      std::cout << input.substr(5) << std::endl;
+      continue;
     }
 
     std::cout << input << ": command not found" << std::endl;
