@@ -5,7 +5,7 @@
 
 builtin_commands::builtin_commands() {
     // Initialize set of built-in commands
-    commands = {"exit", "echo", "type", "pwd"};
+    commands = {"exit", "echo", "type", "pwd", "cd"};
 }
 
 bool builtin_commands::is_builtin(const std::string& command) {
@@ -36,5 +36,8 @@ void builtin_commands::handle_command(const std::string& command,
         }
     } else if (command == "pwd") {
         std::cout << std::filesystem::current_path().string() << std::endl;
+    }
+    if (command == "cd") {
+        
     }
 }

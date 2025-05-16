@@ -15,9 +15,9 @@ void command_executor::execute_command(const std::string& command, const std::st
         execvp(command.c_str(), list);
         perror("execvp");
         exit(1);
-    } else {
-        waitpid(pid, nullptr, 0);
     }
+
+    waitpid(pid, nullptr, 0);
 
     // Free memory
     for (int i = 0; list[i] != nullptr; i++) {

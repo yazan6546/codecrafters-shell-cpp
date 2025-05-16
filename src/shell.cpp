@@ -8,7 +8,7 @@
 #include "command_parser.h"
 
 
-shell::shell(std::string  prompt) : prompt(std::move(prompt)), running(true) {
+shell::shell() : prompt(std::filesystem::current_path().string() + "$ "), running(true) {
     // Flush after every std::cout / std::cerr
     builtin_commands builtin_commands;
     std::cout << std::unitbuf;
