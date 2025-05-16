@@ -29,7 +29,7 @@ void execute_command(const std::string& command, const std::string& args);
     std::cout << "$ ";
 
     std::getline(std::cin, input);
-
+    std::cout << "ok...\n" << std::endl;
     // input = trim(input);
     if (input.empty()) {
       continue;
@@ -133,31 +133,39 @@ std::string search_paths(const std::string &paths, const std::string &command) {
 }
 
 void execute_command(const std::string &input, const std::string &command) {
-  pid_t pid = fork();
 
   char **list = get_list_of_args(input);
+  for (int i = 0; list[i] != nullptr; i++) {
+    std::cout << list[i] << std::endl;
+  }
+
+  pid_t pid = fork();
+
 
   if (pid == 0) {
-    execvp(command.c_str(), list);
+    if (execvp(command.c_str(), list) == 0) {
+      perror("execvp");
+      exit(1);
+    }
   }
   else {
     waitpid(pid, nullptr, 0);
   }
 
-
-
-  if (list != nullptr) {
-    for (int i = 0; list[i] != nullptr; i++) {
-      free(list[i]);  // Free each string
-    }
-    delete[] list;
+  for (int i = 0; list[i] != nullptr; i++) {
+    free(list[i]);  // Free each string
   }
+
+  delete[] list;
+
 }
 
 char** get_list_of_args(const std::string &args) {
   std::vector<std::string> arg_parts;
   std::istringstream iss(args);
   std::string arg;
+
+  std::cout << "args are : " << args << std::endl;
 
   while (iss >> arg) {
     arg_parts.push_back(arg);
