@@ -20,7 +20,7 @@ void execute_command(const std::string& command, const std::string& args);
   // Flush after every std::cout / std:cerr
   std::cout << std::unitbuf;
   std::cerr << std::unitbuf;
-
+  std::string paths = get_env("PATH");
   std::string input;
   // Uncomment this block to pass the first stage
 
@@ -29,8 +29,6 @@ void execute_command(const std::string& command, const std::string& args);
     std::cout << "$ ";
 
     std::getline(std::cin, input);
-    std::cout << "ok...\n" << std::endl;
-    // input = trim(input);
     if (input.empty()) {
       continue;
     }
@@ -38,12 +36,17 @@ void execute_command(const std::string& command, const std::string& args);
     std::string command = extract_command(input);
     std::string args = extract_args(input);
 
-    if (!is_builtin(command)) {
+    if (is_builtin(command)) {
+      handle_command(command, args);
+    }
+    else if (!is_builtin(command) && (!search_paths(paths, command).empty())) {
       execute_command(input, command);
-      continue;
+    }
+    else {
+      std :: cout << command << ": not found" << args << std::endl;
     }
 
-    handle_command(command, args);
+
 
   }
 }
@@ -135,12 +138,7 @@ std::string search_paths(const std::string &paths, const std::string &command) {
 void execute_command(const std::string &input, const std::string &command) {
 
   char **list = get_list_of_args(input);
-  for (int i = 0; list[i] != nullptr; i++) {
-    std::cout << list[i] << std::endl;
-  }
-
   pid_t pid = fork();
-
 
   if (pid == 0) {
     if (execvp(command.c_str(), list) == 0) {
@@ -157,15 +155,12 @@ void execute_command(const std::string &input, const std::string &command) {
   }
 
   delete[] list;
-
 }
 
 char** get_list_of_args(const std::string &args) {
   std::vector<std::string> arg_parts;
   std::istringstream iss(args);
   std::string arg;
-
-  std::cout << "args are : " << args << std::endl;
 
   while (iss >> arg) {
     arg_parts.push_back(arg);
