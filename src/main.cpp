@@ -1,17 +1,21 @@
 #include <iostream>
 #include <string>
 
-int main() {
+[[noreturn]] int main() {
   // Flush after every std::cout / std:cerr
   std::cout << std::unitbuf;
   std::cerr << std::unitbuf;
 
   std::string input;
   // Uncomment this block to pass the first stage
-  std::cout << "$ ";
 
-  std::getline(std::cin, input);
+  while (true) {
 
-  std::cout << input << ": command not found" << std::endl;
+    std::cout << "$ ";
 
+    std::getline(std::cin, input);
+
+    std::cout << input << ": command not found" << std::endl;
+
+  }
 }
