@@ -6,7 +6,7 @@
 
 std::string trim(const std::string &str);
 std::string extract_command(const std::string& input);
-bool is_valid(const std::string& input);
+bool is_builtin(const std::string& input);
 std::string extract_args(const std::string& input);
 void handle_command(const std::string& command, const std::string& args);
 std::string get_env(const std::string &key);
@@ -33,7 +33,7 @@ std::string search_paths(const std::string &paths, const std::string &command);
 
     std::string command = extract_command(input);
 
-    if (!is_valid(command)) {
+    if (!is_builtin(command)) {
       std::cout << command <<": not found" << std::endl;
       continue;
     }
@@ -58,7 +58,7 @@ std::string extract_args(const std::string& input) {
   return ltrimmed;
 }
 
-bool is_valid(const std::string& input) {
+bool is_builtin(const std::string& input) {
 
   // Remove leading whitespaces
   if (input == "exit" || input == "echo" || input == "type") {
@@ -68,13 +68,7 @@ bool is_valid(const std::string& input) {
 }
 
 
-// std::string trim(const std::string &str) {
-//   std::string output = std::regex_replace(str, std::regex("^ +| +$|( ) +"), "$1");
-//   // delete str;
-//   return output;
-// }
-
-void handle_command_builtin(const std::string& command, const std::string& args) {
+void handle_command(const std::string& command, const std::string& args) {
 
 
   if (command == "exit") {
@@ -87,12 +81,19 @@ void handle_command_builtin(const std::string& command, const std::string& args)
   }
 
 
-  if (command == "type" && is_valid(args)) {
+  if (command == "type" && is_builtin(args)) {
     std::cout << args << " is a shell builtin" << std::endl;
     return;
   }
-  if (command == "type" && !is_valid(args)) {
-    std::cout << args <<": not found" << std::endl;
+  if (command == "type" && !is_builtin(args)) {
+    const std::string paths = get_env("PATH");
+    const std::string path = search_paths(paths, args);
+
+    if (path.empty()) {
+      std::cout << args <<": not found" << std::endl;
+      return;
+    }
+    std::cout << args << " is " << path << std::endl;
   }
 }
 
