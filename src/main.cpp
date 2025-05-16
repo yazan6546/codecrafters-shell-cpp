@@ -45,9 +45,6 @@ void execute_command(const std::string& command, const std::string& args);
     else {
       std :: cout << command << ": not found" << args << std::endl;
     }
-
-
-
   }
 }
 
@@ -77,7 +74,7 @@ std::string extract_args(const std::string& input) {
 bool is_builtin(const std::string& input) {
 
   // Remove leading whitespaces
-  if (input == "exit" || input == "echo" || input == "type") {
+  if (input == "exit" || input == "echo" || input == "type" || input == "pwd") {
     return true;
   }
   return false;
@@ -93,23 +90,28 @@ void handle_command(const std::string& command, const std::string& args) {
 
   if (command == "echo") {
     std::cout << args << std::endl;
-    return;
   }
 
 
-  if (command == "type" && is_builtin(args)) {
+  else if (command == "type" && is_builtin(args)) {
     std::cout << args << " is a shell builtin" << std::endl;
-    return;
   }
-  if (command == "type" && !is_builtin(args)) {
+  else if (command == "type" && !is_builtin(args)) {
     const std::string paths = get_env("PATH");
     const std::string path = search_paths(paths, args);
 
     if (path.empty()) {
       std::cout << args <<": not found" << std::endl;
-      return;
     }
-    std::cout << args << " is " << path << std::endl;
+
+    else {
+      std::cout << args << " is " << path << std::endl;
+    }
+  }
+
+  else if (command == "pwd") {
+    std::filesystem::path current_path = std::filesystem::current_path();
+    std::cout << current_path << std::endl;
   }
 }
 
