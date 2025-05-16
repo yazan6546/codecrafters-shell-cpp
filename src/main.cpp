@@ -111,7 +111,7 @@ void handle_command(const std::string& command, const std::string& args) {
 
   else if (command == "pwd") {
     std::filesystem::path current_path = std::filesystem::current_path();
-    std::cout << current_path << std::endl;
+    std::cout << current_path.string() << std::endl;
   }
 }
 
