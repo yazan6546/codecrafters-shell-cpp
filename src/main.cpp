@@ -39,7 +39,7 @@ void execute_command(const std::string& command, const std::string& args);
     std::string args = extract_args(input);
 
     if (!is_builtin(command)) {
-      execute_command(command, args);
+      execute_command(input, command);
       continue;
     }
 
@@ -132,16 +132,10 @@ std::string search_paths(const std::string &paths, const std::string &command) {
 
 }
 
-void execute_command(const std::string& command, const std::string& args) {
+void execute_command(const std::string &input, const std::string &command) {
   pid_t pid = fork();
 
-  char **list;
-  if (args.empty()) {
-    list = nullptr;
-  }
-  else {
-    list = get_list_of_args(args);
-  }
+  char **list = get_list_of_args(input);
 
   if (pid == 0) {
     execvp(command.c_str(), list);
@@ -160,7 +154,7 @@ void execute_command(const std::string& command, const std::string& args) {
   }
 }
 
-char** get_list_of_args(const std::string& args) {
+char** get_list_of_args(const std::string &args) {
   std::vector<std::string> arg_parts;
   std::istringstream iss(args);
   std::string arg;
