@@ -1,12 +1,16 @@
 #include <iostream>
 #include <regex>
 #include <string>
+#include <cstdlib>
+#include <filesystem>
 
 std::string trim(const std::string &str);
 std::string extract_command(const std::string& input);
 bool is_valid(const std::string& input);
 std::string extract_args(const std::string& input);
 void handle_command(const std::string& command, const std::string& args);
+std::string get_env(const std::string &key);
+std::string search_paths(const std::string &paths, const std::string &command);
 
 [[noreturn]] int main() {
   // Flush after every std::cout / std:cerr
@@ -70,7 +74,9 @@ bool is_valid(const std::string& input) {
 //   return output;
 // }
 
-void handle_command(const std::string& command, const std::string& args) {
+void handle_command_builtin(const std::string& command, const std::string& args) {
+
+
   if (command == "exit") {
     exit(0);
   }
@@ -88,4 +94,26 @@ void handle_command(const std::string& command, const std::string& args) {
   if (command == "type" && !is_valid(args)) {
     std::cout << args <<": not found" << std::endl;
   }
+}
+
+
+std::string get_env(const std::string &key) {
+  const char *value = std::getenv(key.c_str());
+  return std::string{value};
+}
+
+// Function that returns true if it matches, false if no match
+std::string search_paths(const std::string &paths, const std::string &command) {
+
+  std::stringstream stream(paths);
+  std::string path_string;
+
+  while (std::getline(stream, path_string, ':')) {
+    std::filesystem::path path(path_string);
+    if (path.filename() == command) {
+      return path;
+    }
+  }
+  return "";
+
 }
