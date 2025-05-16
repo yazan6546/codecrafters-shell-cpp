@@ -1,4 +1,5 @@
 #include <iostream>
+#include <regex>
 #include <string>
 
 [[noreturn]] int main() {
@@ -14,6 +15,9 @@
     std::cout << "$ ";
 
     std::getline(std::cin, input);
+    if (std::regex_match(input, std::regex("^exit [0-9]+$"))) {
+      return 0;
+    }
 
     std::cout << input << ": command not found" << std::endl;
 
