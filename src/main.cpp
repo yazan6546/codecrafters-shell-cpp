@@ -1,7 +1,6 @@
 #include <iostream>
 #include <regex>
 #include <string>
-#include <cstdlib>
 #include <filesystem>
 
 std::string trim(const std::string &str);
@@ -53,7 +52,7 @@ std::string extract_command(const std::string& input) {
 }
 
 std::string extract_args(const std::string& input) {
-  std::string output = input.substr(input.find_first_of(' '));
+  const std::string output = input.substr(input.find_first_of(' '));
   std::string ltrimmed = output.substr(output.find_first_not_of(' '));
   return ltrimmed;
 }
@@ -111,8 +110,8 @@ std::string search_paths(const std::string &paths, const std::string &command) {
 
   while (std::getline(stream, path_string, ':')) {
     std::filesystem::path path(path_string);
-    if (path.filename() == command) {
-      return path;
+    if (std::filesystem::exists(path / command)) {
+      return path / command;
     }
   }
   return "";
